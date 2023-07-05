@@ -1,18 +1,20 @@
-BITS 64
-CPU X64
-
+BITS 64 
+CPU X64 ; Target x86_64 family of CPUs.
+; System V ABI 
+; 1 is the value of write() system call, STDOUT is also set to 1, exit() sys call has 60.
+; %define define constants.
 %define SYSCALL_WRITE 1     ; Define constant for write system call
 %define STDOUT 1            ; Define constant for standard output file descriptor
 %define SYSCALL_EXIT 60     ; Define constant for exit system call
 
-section .text
+section .text ; This tells `nasm` and the linker, that what follows is code that should be placed in the text section of the executable.
 global _start
 
 print_hello:
 	push rbp                ; Save base pointer on the stack
 	mov rbp, rsp            ; Set up new base pointer
 
-	sub rsp, 6              ; Allocate space on the stack for the string "hello"
+	sub rsp, 5             ; Allocate space on the stack for the string "hello"
 
 	mov BYTE [rsp + 0], 'h' ; Store 'h' in the first byte of the string
 	mov BYTE [rsp + 1], 'e' ; Store 'e' in the second byte of the string
