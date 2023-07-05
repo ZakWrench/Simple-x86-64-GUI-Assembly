@@ -1,13 +1,28 @@
 BITS 64 
 CPU X64 ; Target x86_64 family of CPUs.
+
+section .rodata
+
+section .data
+
+
+
+section .text ; This tells `nasm` and the linker, that what follows is code that should be placed in the text section of the executable.
+
 ; System V ABI 
+
+%define AF_UNIX 1
+%define SOCK_STREAM 1
+
+%define SYSCALL_SOCKET 41
+%define SYSCALL_EXIT 60
+
 ; 1 is the value of write() system call, STDOUT is also set to 1, exit() sys call has 60.
 ; %define define constants.
 %define SYSCALL_WRITE 1     ; Define constant for write system call
 %define STDOUT 1            ; Define constant for standard output file descriptor
 %define SYSCALL_EXIT 60     ; Define constant for exit system call
 
-section .text ; This tells `nasm` and the linker, that what follows is code that should be placed in the text section of the executable.
 global _start
 
 print_zak:
@@ -61,6 +76,14 @@ print_hello:
 _start:
 	xor rax, rax            ; Clear rax
 
+	; open a unix socket
+	mov rax, SYSCALL_SOCKET
+	mov rdi, AF_UNIX; Unix socket
+	mov rsi, SOCK_STREAM; Stream oriented
+	mov rdx, 0; automatic protocol
+	syscall
+
 	mov rax, SYSCALL_EXIT    ; Set up the exit system call number in rax
 	mov rdi, 0              ; Set up the exit status in rdi
 	syscall                 ; Call the system call to exit
+	
