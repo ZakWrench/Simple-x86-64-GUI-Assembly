@@ -1,0 +1,46 @@
+(1) strace ./main:
+execve("./main", ["./main"], 0x7fff68936a80 /* 66 vars */) = 0
+exit(0)                                 = ?
++++ exited with 0 +++
+
+1- execve() system call was called
+2- ./main is the path of the program being executed
+3- ["./main"] is the arguments that were passed to the program
+4- 0x7fff68936a80 /* 66 vars */ is the environment of the program
+5- 0 is the exit status of the program
+6- +++ exited +++ imply the program terminated successfully.
+
+(2) file ./main:
+./main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+1- The file is an ELF 64-bit LSB executable file
+2- `version 1 (SYSV) means the file is using the SYstem V ABI
+3- `statically linked` The file does no depend on any shared libraries
+4- `not stripped` The symbols in the file have no been removed
+
+
+note 1: just remember to always have the function epilogs and prologs:
+my_function
+    push rbp
+    mov rbp, rsp
+
+    sub rsp, N
+    [...]
+
+    add rsp, n
+    pop rbp
+    ret
+To further elaborate:
+- function epilogs/prologs refere to specifc parts of a function's code that are responsible for setting up and tearing down the function's stack frame.
+- Function Prolog is the initial part of a function where the necessary setup is performed before executing the main body of the function, x86, the typical function prolog consists of:
+1-Pushing the value of the base pointer 'rbp' onto the stack: `push rbp`
+2-Setting the base pointer 'rbp' to the value of the stack pointer 'rsp': `move rbp, rsp`. This establishes a new base pointer that will be used as a reference point within the function.
+After executing these steps, the function's stack frame is set up, and the function body can begin. The purpose of these actions is to ensure that the function has a consistent frame of reference for accessing local variables, function args, and handling stack-related operations.
+-Function Epilog is the concluding part of a function that restores the state of the stack and prepares for returning control to the calling function:
+1-Restoring the base pointer 'rbp' to its original value by popping it from the stack:'pop rbp'
+This action reverts the base pointer to the value it had before the function prolog.
+2-Returning control to the calling function: 'ret'
+This instruction transfers the program execution back to the caller, indicating the end of the function.
+The function epilog ensures that the stack is properly cleaned up and that the calling function can continue its execution seamlessly.
+Overall, function prologs and epilogs play crucial roles in managing the stack frame and preserving the integrity of the program's execution flow.
+
+

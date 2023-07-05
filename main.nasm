@@ -11,24 +11,23 @@ section .text ; This tells `nasm` and the linker, that what follows is code that
 global _start
 
 print_hello:
-	push rbp                ; Save base pointer on the stack
-	mov rbp, rsp            ; Set up new base pointer
+	push rbp                ; Save base pointer on the stack, to be able to restore it at the end of the function
+	mov rbp, rsp            ; Set up new base pointer, set rbp to rsp 
 
-	sub rsp, 5             ; Allocate space on the stack for the string "hello"
+	sub rsp, 3             ; Allocate space on the stack for the string "zak"
 
-	mov BYTE [rsp + 0], 'h' ; Store 'h' in the first byte of the string
-	mov BYTE [rsp + 1], 'e' ; Store 'e' in the second byte of the string
-	mov BYTE [rsp + 2], 'l' ; Store 'l' in the third byte of the string
-	mov BYTE [rsp + 3], 'l' ; Store 'l' in the fourth byte of the string
-	mov BYTE [rsp + 4], 'o' ; Store 'o' in the fifth byte of the string
-
+	mov BYTE [rsp + 0], 'z' ; Store 'z' in the first byte of the string
+	mov BYTE [rsp + 1], 'a' ; Store 'a' in the second byte of the string
+	mov BYTE [rsp + 2], 'k' ; Store 'k' in the third byte of the string
+	
+	; Make the write syscall
 	mov rax, SYSCALL_WRITE   ; Set up the write system call number in rax
 	mov rdi, STDOUT         ; Set up the standard output file descriptor in rdi
 	lea rsi, [rsp]          ; Set up the address of the string in rsi
-	mov rdx, 5              ; Set up the length of the string in rdx
+	mov rdx, 3              ; Set up the length of the string in rdx
 	syscall                 ; Call the system call to write the string
 
-	add rsp, 5              ; Deallocate the stack space used for the string
+	add rsp, 3              ; Deallocate the stack space used for the string
 
 	pop rbp                 ; Restore the previous base pointer
 	ret                     ; Return from the subroutine
